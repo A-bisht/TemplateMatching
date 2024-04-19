@@ -1,0 +1,20 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import cv2
+
+img_og=cv2.imread('../Cruise.jpg')
+img=cv2.imread('../Cruise.jpg',cv2.IMREAD_GRAYSCALE)
+# img.shape
+template=img[2120:2770,1900:2200] # template of lamp
+w,h=template.shape[::-1] #-1 swaps the w,h 
+#apply temp matching
+res=cv2.matchTemplate(img,template,cv2.TM_CCOEFF)
+# plt.imshow(res)
+min_val,max_val,min_loc,max_loc=cv2.minMaxLoc(res)
+top_left=max_loc
+bottom_right=(top_left[0]+w,top_left[1]+h)
+#draw rectanngle around best matched region
+final=cv2.rectangle(img_og,top_left,bottom_right,255,20)
+img_og[top_left[1]:top_left[1]+h,bottom_right[0]-w:bottom_right[0]]=130
+plt.imshow(img_og)
+cv2.imwrite('../TempMatchresult.jpg',img_og)
